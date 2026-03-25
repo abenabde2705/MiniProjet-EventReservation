@@ -96,10 +96,12 @@ event-reservation/
 ## Installation
 
 ### Prerequisites
-- Docker & Docker Compose
+- Docker & Docker Compose v2 (`docker compose` plugin, not `docker-compose`)
 - Git
 
 ### With Docker (Recommended)
+
+> **Important:** The project has two compose files (`compose.yaml` and `docker-compose.yml`). Always use `-f docker-compose.yml` explicitly, otherwise Docker picks the wrong file.
 
 1. **Clone the repository**
 ```bash
@@ -107,36 +109,35 @@ git clone https://github.com/abenabde2705/MiniProjet-EventReservation.git
 cd MiniProjet-EventReservation
 ```
 
-2. **Copy and configure environment**
+2. **Start Docker services**
 ```bash
-cp .env.example .env.local
-# Edit .env.local with your values
+docker compose -f docker-compose.yml up -d --build
 ```
 
-3. **Start Docker services**
+3. **Generate JWT keys**
 ```bash
-docker-compose up -d --build
+docker compose -f docker-compose.yml exec app php bin/console lexik:jwt:generate-keypair
 ```
 
-4. **Generate JWT keys**
+4. **Create the database schema**
 ```bash
-docker-compose exec app php bin/console lexik:jwt:generate-keypair
+docker compose -f docker-compose.yml exec app php bin/console doctrine:schema:create
 ```
 
-5. **Run database migrations**
+5. **Create an admin user**
+
+Hasher un mot de passe (remplace `monmotdepasse` par ce que tu veux) :
 ```bash
-docker-compose exec app php bin/console doctrine:migrations:migrate --no-interaction
+docker compose -f docker-compose.yml exec app php -r "echo password_hash('monmotdepasse', PASSWORD_BCRYPT);"
 ```
 
-6. **Create an admin user**
+Copie le hash affiché, puis insère l'admin dans la base :
 ```bash
-docker-compose exec app php bin/console app:create-admin
-# Or manually:
-docker-compose exec app php bin/console doctrine:query:sql \
-  "INSERT INTO \"user\" (username, password, roles) VALUES ('admin', '<hashed>', '[\"ROLE_ADMIN\"]')"
+docker compose -f docker-compose.yml exec db psql -U event_user -d event_db -c \
+  "INSERT INTO \"user\" (username, password, roles) VALUES ('admin', 'HASH_COPIE_ICI', '[\"ROLE_ADMIN\"]');"
 ```
 
-7. **Access the application**
+6. **Access the application**
 - App: http://localhost:8080
 - Adminer (DB GUI): http://localhost:8081
 
@@ -144,7 +145,7 @@ docker-compose exec app php bin/console doctrine:query:sql \
 
 ### Manual Installation (without Docker)
 
-**Requirements:** PHP 8.2+, Composer, PostgreSQL 15, Node.js (optional)
+**Requirements:** PHP 8.2+, Composer, PostgreSQL 15
 
 1. **Install dependencies**
 ```bash
@@ -162,10 +163,10 @@ cp .env.example .env.local
 php bin/console lexik:jwt:generate-keypair
 ```
 
-4. **Create database and run migrations**
+4. **Create database and schema**
 ```bash
 php bin/console doctrine:database:create
-php bin/console doctrine:migrations:migrate
+php bin/console doctrine:schema:create
 ```
 
 5. **Start development server**
