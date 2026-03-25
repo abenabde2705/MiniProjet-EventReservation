@@ -3,48 +3,54 @@
 {% block title %}All Events - EventReserve{% endblock %}
 
 {% block body %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="fw-bold"><i class="bi bi-grid"></i> All Events</h1>
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-zinc-900">All Events</h1>
+        <p class="text-sm text-zinc-500 mt-1">Browse and reserve your spot</p>
+    </div>
 </div>
 
 {% if events is empty %}
-<div class="text-center text-muted py-5">
-    <i class="bi bi-calendar-x" style="font-size:3rem;"></i>
-    <p class="mt-3">No events found.</p>
+<div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 bg-white py-20 text-zinc-400">
+    <i class="bi bi-calendar-x text-5xl mb-4"></i>
+    <p class="text-base font-medium">No events found</p>
+    <p class="text-sm mt-1">Check back soon for upcoming events.</p>
 </div>
 {% else %}
-<div class="row g-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for event in events %}
-    <div class="col-md-6 col-lg-4">
-        <div class="card event-card h-100 shadow-sm">
-            {% if event.image %}
-            <img src="{{ asset('uploads/events/' ~ event.image) }}" class="card-img-top" alt="{{ event.title }}">
-            {% else %}
-            <div class="d-flex align-items-center justify-content-center" style="height:200px;background:linear-gradient(135deg,#6366f1,#8b5cf6);">
-                <i class="bi bi-calendar-event text-white" style="font-size:3rem;"></i>
+    <div class="group rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+        {% if event.image %}
+        <img src="{{ asset('uploads/events/' ~ event.image) }}" class="w-full h-48 object-cover" alt="{{ event.title }}">
+        {% else %}
+        <div class="w-full h-48 bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center">
+            <i class="bi bi-calendar-event text-white text-5xl opacity-70"></i>
+        </div>
+        {% endif %}
+        <div class="p-5 flex flex-col flex-1">
+            <h3 class="font-semibold text-zinc-900 mb-2 line-clamp-1">{{ event.title }}</h3>
+            <div class="flex items-center gap-1.5 text-xs text-zinc-500 mb-1">
+                <i class="bi bi-calendar3 text-indigo-500"></i>
+                {{ event.date|date('d M Y, H:i') }}
             </div>
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title fw-bold">{{ event.title }}</h5>
-                <p class="text-muted small mb-1">
-                    <i class="bi bi-calendar3"></i> {{ event.date|date('d M Y, H:i') }}
-                </p>
-                <p class="text-muted small mb-2">
-                    <i class="bi bi-geo-alt"></i> {{ event.location }}
-                </p>
-                <p class="card-text text-muted flex-grow-1">
-                    {{ event.description|slice(0, 120) }}{% if event.description|length > 120 %}...{% endif %}
-                </p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    {% if event.availableSeats > 0 %}
-                    <span class="badge bg-success"><i class="bi bi-people"></i> {{ event.availableSeats }} seats</span>
-                    {% else %}
-                    <span class="badge bg-danger">Fully Booked</span>
-                    {% endif %}
-                    <a href="{{ path('app_event_show', {'id': event.id}) }}" class="btn btn-primary btn-sm">
-                        View Details
-                    </a>
-                </div>
+            <div class="flex items-center gap-1.5 text-xs text-zinc-500 mb-3">
+                <i class="bi bi-geo-alt text-indigo-500"></i>
+                {{ event.location }}
+            </div>
+            <p class="text-sm text-zinc-500 flex-1 mb-4">
+                {{ event.description|slice(0, 120) }}{% if event.description|length > 120 %}…{% endif %}
+            </p>
+            <div class="flex items-center justify-between pt-3 border-t border-zinc-100">
+                {% if event.availableSeats > 0 %}
+                <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                    <i class="bi bi-people"></i> {{ event.availableSeats }} seats
+                </span>
+                {% else %}
+                <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">Fully Booked</span>
+                {% endif %}
+                <a href="{{ path('app_event_show', {'id': event.id}) }}" class="inline-flex items-center gap-1 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 transition-colors">
+                    View Details <i class="bi bi-arrow-right"></i>
+                </a>
             </div>
         </div>
     </div>

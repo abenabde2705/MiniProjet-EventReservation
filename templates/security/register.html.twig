@@ -1,59 +1,79 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register - EventReserve{% endblock %}
+{% block title %}Create Account - EventReserve{% endblock %}
 
 {% block body %}
-<div class="row justify-content-center">
-    <div class="col-md-5 col-lg-4">
-        <div class="card border-0 shadow-sm rounded-3 p-4">
-            <div class="text-center mb-4">
-                <i class="bi bi-person-plus" style="font-size:3rem;color:#4f46e5;"></i>
-                <h2 class="fw-bold mt-2">Create Account</h2>
-                <p class="text-muted">Join EventReserve today!</p>
+<div class="flex min-h-[calc(100vh-16rem)] items-center justify-center py-8">
+    <div class="w-full max-w-sm">
+        {# Header #}
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 mb-4">
+                <i class="bi bi-person-plus-fill text-xl text-indigo-600"></i>
             </div>
+            <h1 class="text-2xl font-bold text-zinc-900">Create an account</h1>
+            <p class="text-sm text-zinc-500 mt-1">Join EventReserve today</p>
+        </div>
 
+        {# Card #}
+        <div class="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
             {% if error %}
-            <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle"></i> {{ error }}
+            <div class="mb-4 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                <i class="bi bi-exclamation-triangle-fill mt-0.5 shrink-0"></i>
+                <span>{{ error }}</span>
             </div>
             {% endif %}
 
-            <form method="post" action="{{ path('app_register') }}">
-                <div class="mb-3">
-                    <label for="username" class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input type="text" id="username" name="username" class="form-control" required autofocus
-                               minlength="3" maxlength="50">
+            <form method="post" action="{{ path('app_register') }}" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                        Username <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400 pointer-events-none">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" id="username" name="username" required autofocus
+                               minlength="3" maxlength="50"
+                               class="w-full rounded-md border border-zinc-200 bg-white pl-9 pr-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label fw-semibold">Email</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                        <input type="email" id="email" name="email" class="form-control">
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label for="password" class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input type="password" id="password" name="password" class="form-control" required minlength="6">
-                    </div>
-                    <div class="form-text">Minimum 6 characters.</div>
                 </div>
 
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="bi bi-person-check"></i> Create Account
-                    </button>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-zinc-700 mb-1.5">Email</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400 pointer-events-none">
+                            <i class="bi bi-envelope"></i>
+                        </span>
+                        <input type="email" id="email" name="email"
+                               class="w-full rounded-md border border-zinc-200 bg-white pl-9 pr-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                    </div>
                 </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                        Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400 pointer-events-none">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        <input type="password" id="password" name="password" required minlength="6"
+                               class="w-full rounded-md border border-zinc-200 bg-white pl-9 pr-3 py-2.5 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1.5">Minimum 6 characters.</p>
+                </div>
+
+                <button type="submit"
+                        class="w-full flex items-center justify-center gap-2 rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm mt-2">
+                    <i class="bi bi-person-check"></i> Create Account
+                </button>
             </form>
-
-            <p class="text-center mt-3 mb-0">
-                Already have an account? <a href="{{ path('app_login') }}">Sign in</a>
-            </p>
         </div>
+
+        <p class="text-center text-sm text-zinc-500 mt-5">
+            Already have an account?
+            <a href="{{ path('app_login') }}" class="font-medium text-indigo-600 hover:text-indigo-700">Sign in</a>
+        </p>
     </div>
 </div>
 {% endblock %}
