@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: event_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - event_network
+    depends_on:
+      - db
+    environment:
+      - APP_ENV=dev
+      - DATABASE_URL=postgresql://event_user:event_pass@db:5432/event_db?serverVersion=15&charset=utf8
+
+  nginx:
+    image: nginx:alpine
+    container_name: event_nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - event_network
+    depends_on:
+      - app
+
+  db:
+    image: postgres:15-alpine
+    container_name: event_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: event_db
+      POSTGRES_USER: event_user
+      POSTGRES_PASSWORD: event_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - event_network
+
+  adminer:
+    image: adminer:latest
+    container_name: event_adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - event_network
+    depends_on:
+      - db
+
+networks:
+  event_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

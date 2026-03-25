@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reserve a Seat - {{ event.title }}{% endblock %}
+
+{% block body %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_event_index') }}">Events</a></li>
+        <li class="breadcrumb-item"><a href="{{ path('app_event_show', {'id': event.id}) }}">{{ event.title }}</a></li>
+        <li class="breadcrumb-item active">Reserve</li>
+    </ol>
+</nav>
+
+<div class="row g-4 justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm rounded-3 p-4">
+            <h2 class="fw-bold mb-1">Reserve Your Seat</h2>
+            <p class="text-muted mb-4">
+                <i class="bi bi-calendar3"></i> {{ event.title }} &mdash; {{ event.date|date('d M Y, H:i') }}
+            </p>
+
+            {% if errors is not empty %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for err in errors %}
+                    <li>{{ err }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="post" action="{{ path('app_reservation_create', {'id': event.id}) }}">
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" id="name" name="name" class="form-control" required
+                               value="{{ app.request.request.get('name', app.user.username) }}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" id="email" name="email" class="form-control" required
+                               value="{{ app.request.request.get('email', app.user.email ?? '') }}">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="phone" class="form-label fw-semibold">Phone</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input type="tel" id="phone" name="phone" class="form-control"
+                               value="{{ app.request.request.get('phone', '') }}">
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-ticket-perforated"></i> Confirm Reservation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 p-4">
+            <h5 class="fw-bold mb-3">Event Summary</h5>
+            {% if event.image %}
+            <img src="{{ asset('uploads/events/' ~ event.image) }}" class="img-fluid rounded mb-3" alt="{{ event.title }}">
+            {% endif %}
+            <p><strong>{{ event.title }}</strong></p>
+            <p class="text-muted small">
+                <i class="bi bi-calendar3"></i> {{ event.date|date('d M Y, H:i') }}<br>
+                <i class="bi bi-geo-alt"></i> {{ event.location }}<br>
+                <i class="bi bi-people"></i> {{ event.availableSeats }} seats available
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

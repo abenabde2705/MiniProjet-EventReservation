@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+parameters:
+    app.rp_id: '%env(APP_RP_ID)%'
+    app.rp_name: '%env(APP_RP_NAME)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+
+    App\Service\PasskeyService:
+        arguments:
+            $rpId: '%app.rp_id%'
+            $rpName: '%app.rp_name%'
