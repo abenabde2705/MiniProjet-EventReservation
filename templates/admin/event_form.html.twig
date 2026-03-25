@@ -3,85 +3,111 @@
 {% block title %}{{ action }} Event - Admin{% endblock %}
 
 {% block body %}
-<nav aria-label="breadcrumb" class="mb-4">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ path('app_admin_dashboard') }}">Dashboard</a></li>
-        <li class="breadcrumb-item active">{{ action }} Event</li>
-    </ol>
+{# Breadcrumb #}
+<nav class="flex items-center gap-1.5 text-sm text-zinc-500 mb-6">
+    <a href="{{ path('app_admin_dashboard') }}" class="hover:text-zinc-900 transition-colors">Dashboard</a>
+    <i class="bi bi-chevron-right text-xs text-zinc-400"></i>
+    <span class="text-zinc-900 font-medium">{{ action }} Event</span>
 </nav>
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-3 p-4">
-            <h2 class="fw-bold mb-4">{{ action }} Event</h2>
+<div class="max-w-2xl">
+    <h1 class="text-2xl font-bold text-zinc-900 mb-6">{{ action }} Event</h1>
 
-            {% if errors is not empty %}
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    {% for err in errors %}
-                    <li>{{ err }}</li>
-                    {% endfor %}
-                </ul>
+    <div class="rounded-xl border border-zinc-200 bg-white shadow-sm p-6">
+        {% if errors is not empty %}
+        <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <div class="flex items-center gap-2 font-medium mb-1">
+                <i class="bi bi-exclamation-triangle-fill"></i> Please fix the following errors:
             </div>
-            {% endif %}
-
-            <form method="post" enctype="multipart/form-data"
-                  action="{{ event.id ? path('app_admin_event_edit', {'id': event.id}) : path('app_admin_event_new') }}">
-
-                <div class="mb-3">
-                    <label for="title" class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                    <input type="text" id="title" name="title" class="form-control form-control-lg"
-                           value="{{ event.title ?? '' }}" required maxlength="255">
-                </div>
-
-                <div class="mb-3">
-                    <label for="description" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
-                    <textarea id="description" name="description" class="form-control" rows="5" required>{{ event.description ?? '' }}</textarea>
-                </div>
-
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="date" class="form-label fw-semibold">Date & Time <span class="text-danger">*</span></label>
-                        <input type="datetime-local" id="date" name="date" class="form-control" required
-                               value="{{ event.date ? event.date|date('Y-m-d\\TH:i') : '' }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="seats" class="form-label fw-semibold">Total Seats <span class="text-danger">*</span></label>
-                        <input type="number" id="seats" name="seats" class="form-control" min="1" required
-                               value="{{ event.seats ?? '' }}">
-                    </div>
-                </div>
-
-                <div class="mb-3 mt-3">
-                    <label for="location" class="form-label fw-semibold">Location <span class="text-danger">*</span></label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                        <input type="text" id="location" name="location" class="form-control" required
-                               value="{{ event.location ?? '' }}">
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label for="image" class="form-label fw-semibold">Event Image</label>
-                    {% if event.image %}
-                    <div class="mb-2">
-                        <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="Current image" class="img-thumbnail" style="max-height:150px;">
-                        <small class="d-block text-muted mt-1">Upload a new image to replace the current one.</small>
-                    </div>
-                    {% endif %}
-                    <input type="file" id="image" name="image" class="form-control" accept="image/*">
-                </div>
-
-                <div class="d-flex gap-3">
-                    <button type="submit" class="btn btn-primary btn-lg px-5">
-                        <i class="bi bi-check-circle"></i> {{ action }} Event
-                    </button>
-                    <a href="{{ path('app_admin_dashboard') }}" class="btn btn-outline-secondary btn-lg">
-                        Cancel
-                    </a>
-                </div>
-            </form>
+            <ul class="list-disc list-inside space-y-0.5 text-red-700">
+                {% for err in errors %}
+                <li>{{ err }}</li>
+                {% endfor %}
+            </ul>
         </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data"
+              action="{{ event.id ? path('app_admin_event_edit', {'id': event.id}) : path('app_admin_event_new') }}"
+              class="space-y-5">
+
+            <div>
+                <label for="title" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                    Title <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="title" name="title" required maxlength="255"
+                       value="{{ event.title ?? '' }}"
+                       class="w-full rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+            </div>
+
+            <div>
+                <label for="description" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                    Description <span class="text-red-500">*</span>
+                </label>
+                <textarea id="description" name="description" rows="5" required
+                          class="w-full rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition resize-none">{{ event.description ?? '' }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="date" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                        Date & Time <span class="text-red-500">*</span>
+                    </label>
+                    <input type="datetime-local" id="date" name="date" required
+                           value="{{ event.date ? event.date|date('Y-m-d\\TH:i') : '' }}"
+                           class="w-full rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                </div>
+                <div>
+                    <label for="seats" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                        Total Seats <span class="text-red-500">*</span>
+                    </label>
+                    <input type="number" id="seats" name="seats" min="1" required
+                           value="{{ event.seats ?? '' }}"
+                           class="w-full rounded-md border border-zinc-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                </div>
+            </div>
+
+            <div>
+                <label for="location" class="block text-sm font-medium text-zinc-700 mb-1.5">
+                    Location <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-400 pointer-events-none">
+                        <i class="bi bi-geo-alt"></i>
+                    </span>
+                    <input type="text" id="location" name="location" required
+                           value="{{ event.location ?? '' }}"
+                           class="w-full rounded-md border border-zinc-200 bg-white pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition">
+                </div>
+            </div>
+
+            <div>
+                <label for="image" class="block text-sm font-medium text-zinc-700 mb-1.5">Event Image</label>
+                {% if event.image %}
+                <div class="mb-3 p-3 rounded-lg border border-zinc-200 bg-zinc-50 flex items-center gap-3">
+                    <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="Current image"
+                         class="w-16 h-16 rounded-md object-cover">
+                    <div>
+                        <p class="text-sm font-medium text-zinc-700">Current image</p>
+                        <p class="text-xs text-zinc-400 mt-0.5">Upload a new file to replace it.</p>
+                    </div>
+                </div>
+                {% endif %}
+                <input type="file" id="image" name="image" accept="image/*"
+                       class="w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+            </div>
+
+            <div class="flex items-center gap-3 pt-2 border-t border-zinc-100">
+                <button type="submit"
+                        class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm">
+                    <i class="bi bi-check-lg"></i> {{ action }} Event
+                </button>
+                <a href="{{ path('app_admin_dashboard') }}"
+                   class="inline-flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+                    Cancel
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
